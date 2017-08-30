@@ -1,3 +1,5 @@
+import "setimmediate";
+
 export function shouldRender(comp, nextProps, nextState) {
   const { props, state } = comp;
   return !deepEquals(props, nextProps) || !deepEquals(state, nextState);
@@ -82,4 +84,14 @@ export function deepEquals(a, b, ca = [], cb = []) {
 
 function isArguments(object) {
   return Object.prototype.toString.call(object) === "[object Arguments]";
+}
+
+export function setState(instance, state, callback) {
+  const { safeRenderCompletion } = instance.props;
+  if (safeRenderCompletion) {
+    instance.setState(state, callback);
+  } else {
+    instance.setState(state);
+    setImmediate(callback);
+  }
 }

@@ -1,5 +1,5 @@
 import FileWidget from "./FileWidget";
 
-export default {
+export const widgets = {
   FileWidget: FileWidget
 };

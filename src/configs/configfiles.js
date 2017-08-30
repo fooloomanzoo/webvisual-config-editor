@@ -7,7 +7,8 @@ module.exports = {
       items: {
         "ui:widget": "file",
         "ui:options": {
-          accept: ".json"
+          accept: ".json",
+          editwith: "connections"
         }
       }
     }

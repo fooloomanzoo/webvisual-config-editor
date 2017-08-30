@@ -4,7 +4,7 @@ import Codemirror from "react-codemirror";
 import "codemirror/mode/javascript/javascript";
 
 import { shouldRender } from "./utils.js";
-import { FileWidget } from "./widgets";
+import { widgets } from "./widgets";
 
 import { configs } from "./configs";
 import Form from "react-jsonschema-form";
@@ -13,8 +13,8 @@ import Form from "react-jsonschema-form";
 // bootstrap ones.
 import "codemirror/lib/codemirror.css";
 
-const widgets = {
-  file: FileWidget
+const CustomWidgets = {
+  file: widgets.FileWidget
 };
 
 // Patching CodeMirror#componentWillReceiveProps so it's executed synchronously
@@ -40,7 +40,7 @@ const log = type => console.log.bind(console, type);
 const fromJson = json => JSON.parse(json);
 const toJson = val => JSON.stringify(val, null, 2);
 const cmOptions = {
-  theme: "paper",
+  theme: "default",
   height: "auto",
   viewportMargin: Infinity,
   mode: {
@@ -52,17 +52,6 @@ const cmOptions = {
   lineWrapping: true,
   indentWithTabs: false,
   tabSize: 2
-};
-
-const themes = {
-  default: {
-    stylesheet:
-      "//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-  },
-  paper: {
-    stylesheet:
-      "//cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.6/paper/bootstrap.min.css"
-  }
 };
 
 class Editor extends Component {
@@ -130,7 +119,7 @@ class Selector extends Component {
 
   render() {
     return (
-      <ul className="nav nav-pills">
+      <ul className="nav navbar-nav">
         {Object.keys(configs).map((label, i) => {
           return (
             <li
@@ -149,27 +138,11 @@ class Selector extends Component {
   }
 }
 
-function ThemeSelector({ theme, select }) {
-  const themeSchema = {
-    type: "string",
-    enum: Object.keys(themes)
-  };
-  return (
-    <Form
-      schema={themeSchema}
-      formData={theme}
-      onChange={({ formData }) => select(formData, themes[formData])}
-    >
-      <div />
-    </Form>
-  );
-}
-
 class App extends Component {
   constructor(props) {
     super(props);
     // initialize state with server data
-    const { schema, uiSchema, formData, validate } = configs.Server;
+    const { schema, uiSchema, formData, validate } = configs.server;
     this.state = {
       form: false,
       schema,
@@ -177,9 +150,9 @@ class App extends Component {
       formData,
       validate,
       editor: "default",
-      theme: "paper",
+      theme: "default",
       liveValidate: true,
-      shareURL: null
+      fileURL: null
     };
   }
 
@@ -192,7 +165,7 @@ class App extends Component {
         alert("Unable to load form setup data.");
       }
     } else {
-      this.load(configs.Server);
+      this.load(configs.server);
     }
   }
 
@@ -209,7 +182,7 @@ class App extends Component {
     );
   };
 
-  onFormDataEdited = formData => this.setState({ formData, shareURL: null });
+  onFormDataEdited = formData => this.setState({ formData, fileURL: null });
 
   onThemeSelected = (theme, { stylesheet, editor }) => {
     this.setState({ theme, editor: editor ? editor : "paper" });
@@ -220,7 +193,7 @@ class App extends Component {
   };
 
   onFormDataChange = ({ formData }) =>
-    this.setState({ formData, shareURL: null });
+    this.setState({ formData, fileURL: null });
 
   render() {
     const {
@@ -228,8 +201,8 @@ class App extends Component {
       uiSchema,
       formData,
       liveValidate,
+      fileURL,
       validate,
-      theme,
       editor,
       ArrayFieldTemplate,
       transformErrors
@@ -238,25 +211,19 @@ class App extends Component {
     return (
       <div className="container-fluid">
         <div className="page-header">
-          <h1>react-jsonschema-form</h1>
+          <h3>{fileURL}</h3>
           <div className="row">
-            <div className="col-sm-8">
+            <div className="col-sm-9">
               <Selector onSelected={this.load} />
             </div>
-            <div className="col-sm-2">
-              <ThemeSelector theme={theme} select={this.onThemeSelected} />
+            <div className="col-sm-3">
+              <button className="btn btn-primary" type="submit">
+                Speichern
+              </button>
             </div>
           </div>
         </div>
-        <div className="col-sm-7">
-          <Editor
-            title="formData"
-            theme={editor}
-            code={toJson(formData)}
-            onChange={this.onFormDataEdited}
-          />
-        </div>
-        <div className="col-sm-5">
+        <div className="col-sm-8">
           {this.state.form && (
             <Form
               ArrayFieldTemplate={ArrayFieldTemplate}
@@ -267,7 +234,7 @@ class App extends Component {
               onChange={this.onFormDataChange}
               onSubmit={({ formData }) =>
                 console.log("submitted formData", formData)}
-              widgets={widgets}
+              widgets={CustomWidgets}
               validate={validate}
               onBlur={(id, value) =>
                 console.log(`Touched ${id} with value ${value}`)}
@@ -275,16 +242,16 @@ class App extends Component {
                 console.log(`Focused ${id} with value ${value}`)}
               transformErrors={transformErrors}
               onError={log("errors")}
-            >
-              <div className="row">
-                <div className="col-sm-3">
-                  <button className="btn btn-primary" type="submit">
-                    Submit
-                  </button>
-                </div>
-              </div>
-            </Form>
+            />
           )}
+        </div>
+        <div className="col-sm-4">
+          <Editor
+            title={fileURL}
+            theme={editor}
+            code={toJson(formData)}
+            onChange={this.onFormDataEdited}
+          />
         </div>
       </div>
     );

@@ -9,7 +9,7 @@ module.exports = {
           path: {
             "ui:widget": "file",
             "ui:options": {
-              accept: ".json"
+              accept: ".svg"
             }
           }
         }
@@ -20,7 +20,7 @@ module.exports = {
         path: {
           "ui:widget": "file",
           "ui:options": {
-            accept: ".json"
+            accept: ".svg"
           }
         }
       }

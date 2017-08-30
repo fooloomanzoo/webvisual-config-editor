@@ -4,8 +4,8 @@ import locals from "./locals";
 import connections from "./connections";
 
 export const configs = {
-  Server: server,
-  Connection: connections,
-  Configfiles: configfiles,
-  Locals: locals
+  server: server,
+  connection: connections,
+  configfiles: configfiles,
+  locals: locals
 };

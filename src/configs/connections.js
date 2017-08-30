@@ -7,15 +7,13 @@ module.exports = {
       file: {
         items: {
           path: {
-            "ui:widget": "file",
-            "ui:options": {
-              accept: ".json"
-            }
+            "ui:widget": "file"
           },
           localconfigfile: {
             "ui:widget": "file",
             "ui:options": {
-              accept: ".json"
+              accept: ".json",
+              editwith: "locals"
             }
           }
         }
@@ -25,7 +23,8 @@ module.exports = {
           localconfigfile: {
             "ui:widget": "file",
             "ui:options": {
-              accept: ".json"
+              accept: ".json",
+              editwith: "locals"
             }
           }
         }
@@ -35,7 +34,8 @@ module.exports = {
           localconfigfile: {
             "ui:widget": "file",
             "ui:options": {
-              accept: ".json"
+              accept: ".json",
+              editwith: "locals"
             }
           }
         }
